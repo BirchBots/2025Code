@@ -5,24 +5,24 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.IOConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveCmd extends Command {
 
     private final SwerveSubsystem swerveSubsystem;
-    private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
+    private final Supplier<Double> xSpdFunc, ySpdFunc, turnSpdFunc;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
 
-    public SwerveCmd(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction) {
+    public SwerveCmd(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunc, Supplier<Double> ySpdFunc, Supplier<Double> turnSpdFunc) {
         this.swerveSubsystem = swerveSubsystem;
-        this.xSpdFunction = xSpdFunction;
-        this.ySpdFunction = ySpdFunction;
-        this.turningSpdFunction = turningSpdFunction;
-        this.xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
-        this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
-        this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
+        this.xSpdFunc = xSpdFunc;
+        this.ySpdFunc = ySpdFunc;
+        this.turnSpdFunc = turnSpdFunc;
+        this.xLimiter = new SlewRateLimiter(SwerveConstants.kTeleSlew);
+        this.yLimiter = new SlewRateLimiter(SwerveConstants.kTeleSlew);
+        this.turningLimiter = new SlewRateLimiter(SwerveConstants.kTeleAngularSlew);
         addRequirements(swerveSubsystem);
     }
 
@@ -30,35 +30,34 @@ public class SwerveCmd extends Command {
     public void initialize() {}
 
     @Override
-    public void execute() {        
-        // 1. Get real-time joystick inputs
-        double xSpeed = xSpdFunction.get();
-        double ySpeed = ySpdFunction.get();
-        double turningSpeed = -turningSpdFunction.get();
+    public void execute() {      
+        // Get current joystick values  
+        double xSpeed = xSpdFunc.get();
+        double ySpeed = ySpdFunc.get();
+        double turningSpeed = -turnSpdFunc.get();
 
-        // 2. Apply deadband
-        xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
-        ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
-        turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
+        // Apply a deadband (if the joystick moves super little, just don't do anything, look up ternary operator if confused)
+        xSpeed = Math.abs(xSpeed) > IOConstants.kDeadband ? xSpeed : 0.0;
+        ySpeed = Math.abs(ySpeed) > IOConstants.kDeadband ? ySpeed : 0.0;
+        turningSpeed = Math.abs(turningSpeed) > IOConstants.kDeadband ? turningSpeed : 0.0;
 
-        // 3. Make the driving smoother
-        xSpeed = xLimiter.calculate(xSpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond;
-        ySpeed = yLimiter.calculate(ySpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond;
-        turningSpeed = turningLimiter.calculate(turningSpeed)
-                * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond;
+        // Add a slew limiter (makes motion less jank)
+        xSpeed = xLimiter.calculate(xSpeed) * SwerveConstants.kMaxMetersPerSecond;
+        ySpeed = yLimiter.calculate(ySpeed) * SwerveConstants.kMaxMetersPerSecond;
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveConstants.kMaxMetersPerSecond;
 
-        // 4. Construct desired chassis speeds
+        // ChassisSpeeds object, just give it x y and theta
         ChassisSpeeds chassisSpeeds;
         chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 
-        // 5. Convert chassis speeds to individual module states
-        SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+        // Create an array of 4 module states for each swerve module from kinematics (x and y location of modules) and chassis speeds
+        SwerveModuleState[] moduleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
-        // 6. Output each module states to wheels
-        swerveSubsystem.addRot(turningSpeed);
+        // Tell the subsystem to do something with said states
         swerveSubsystem.setModuleStates(moduleStates);
     }
 
+    // When ur done ur done buddy
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.stopModules();

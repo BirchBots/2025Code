@@ -4,53 +4,37 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
-        //This rotation is just for simulation purposes, will be replaced with encoders on the bot
-        double rot = 0;
         // Swerve module defined in subsystems, class to represesnt each corner
-        // Parameters: drive motor id, turn motor id, whether the motor is reversed, absolute encoder id, absolute encoder offset, whether the encoder is reversed
+        // Parameters: drive motor id, turn motor id, absolute encoder id, absolute encoder offset
         // These can all be physically found on the components or in rev software (will show u)
         // Repeat x4
     private final SwerveModule frontLeft = new SwerveModule(
-            DriveConstants.kFrontLeftDriveMotorPort,
-            DriveConstants.kFrontLeftTurningMotorPort,
-            DriveConstants.kFrontLeftDriveEncoderReversed,
-            DriveConstants.kFrontLeftTurningEncoderReversed,
-            DriveConstants.kFrontLeftDriveAbsoluteEncoderPort,
-            DriveConstants.kFrontLeftDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kFrontLeftDriveAbsoluteEncoderReversed);
+            SwerveConstants.kFlDriveCAN,
+            SwerveConstants.kFlTurnCAN,
+            SwerveConstants.kFlEncoderId,
+            SwerveConstants.kFlOffset);
 
     private final SwerveModule frontRight = new SwerveModule(
-            DriveConstants.kFrontRightDriveMotorPort,
-            DriveConstants.kFrontRightTurningMotorPort,
-            DriveConstants.kFrontRightDriveEncoderReversed,
-            DriveConstants.kFrontRightTurningEncoderReversed,
-            DriveConstants.kFrontRightDriveAbsoluteEncoderPort,
-            DriveConstants.kFrontRightDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kFrontRightDriveAbsoluteEncoderReversed);
+            SwerveConstants.kFrDriveCAN,
+            SwerveConstants.kFrTurnCAN,
+            SwerveConstants.kFrEncoderId,
+            SwerveConstants.kFrOffset);
 
     private final SwerveModule backLeft = new SwerveModule(
-            DriveConstants.kBackLeftDriveMotorPort,
-            DriveConstants.kBackLeftTurningMotorPort,
-            DriveConstants.kBackLeftDriveEncoderReversed,
-            DriveConstants.kBackLeftTurningEncoderReversed,
-            DriveConstants.kBackLeftDriveAbsoluteEncoderPort,
-            DriveConstants.kBackLeftDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kBackLeftDriveAbsoluteEncoderReversed);
+            SwerveConstants.kBlDriveCAN,
+            SwerveConstants.kBlTurnCAN,
+            SwerveConstants.kBlEncoderId,
+            SwerveConstants.kBlOffset);
 
     private final SwerveModule backRight = new SwerveModule(
-            DriveConstants.kBackRightDriveMotorPort,
-            DriveConstants.kBackRightTurningMotorPort,
-            DriveConstants.kBackRightDriveEncoderReversed,
-            DriveConstants.kBackRightTurningEncoderReversed,
-            DriveConstants.kBackRightDriveAbsoluteEncoderPort,
-            DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
+            SwerveConstants.kBrDriveCAN,
+            SwerveConstants.kBrTurnCAN,
+            SwerveConstants.kBrEncoderId,
+            SwerveConstants.kBrOffset);
 
-
-    public SwerveSubsystem() {}
 
     public void stopModules() {
         //When u wanna stop the swerve modules, stop the damn swerve modules
@@ -60,11 +44,6 @@ public class SwerveSubsystem extends SubsystemBase {
         backRight.stop();
     }
 
-    //This method is just for simulating purposes, same with the rot variable
-    public void addRot(double spd) {
-        rot += spd/180*Math.PI;
-        SmartDashboard.putNumber("rot", rot);
-    }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         // Create an array of numbers with the rotation and speeds (what they should be, NOT WHAT THEY ARE)
@@ -79,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 desiredStates[3].speedMetersPerSecond
               };
         // Desaturate wheel speeds normalizes all the speeds, if theyre going faster than they physically can, divide by that number to get max speed of 1
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.kMaxMetersPerSecond);
         // Swerve module states each store an angle and speed, were given an array of 4 states for each corner, give each state to each corner
         frontRight.setDesiredState(desiredStates[0]);
         frontLeft.setDesiredState(desiredStates[1]);
