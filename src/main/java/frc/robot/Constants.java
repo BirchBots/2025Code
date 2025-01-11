@@ -15,14 +15,10 @@ public final class Constants {
         public static final double kMaxMetersPerSecond = 4.6;
         public static final double kDriveGearRatio = 6.75;
         public static final double kTurnGearRatio = 6.75;
-<<<<<<< Updated upstream
-        public static final double kPTurning = 0.5;
-=======
         public static final double kP = 0.35;
         public static final double kI = 0.0;
         public static final double kD = 0.08;
         public static final double kF = 0.1;
->>>>>>> Stashed changes
 
         public static final double kTrackWidth = Units.inchesToMeters(30);
         // Distance between right and left wheels
@@ -34,22 +30,6 @@ public final class Constants {
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
                 new Translation2d(-kWheelBase / 2, kTrackWidth / 2));
 
-<<<<<<< Updated upstream
-        public static final int kFlDriveCAN = 5; 
-        public static final int kBlDriveCAN = 1; 
-        public static final int kFrDriveCAN = 3;
-        public static final int kBrDriveCAN = 7;
-            
-        public static final int kFlTurnCAN = 6;
-        public static final int kBlTurnCAN = 2;
-        public static final int kFrTurnCAN = 4;
-        public static final int kBrTurnCAN = 8;
-        
-        public static final int kFlEncoderId = 0;
-        public static final int kFrEncoderId = 1;
-        public static final int kBlEncoderId = 3;
-        public static final int kBrEncoderId = 2;
-=======
         public static final int kFrTurnCAN = 1;
         public static final int kFrDriveCAN = 2;
         public static final int kBrTurnCAN = 3;
@@ -63,7 +43,6 @@ public final class Constants {
         public static final int kBrEncoderId = 2;
         public static final int kBlEncoderId = 3;
         public static final int kFlEncoderId = 4;
->>>>>>> Stashed changes
 
         public static final double kFlOffset = 0;
         public static final double kFrOffset = 0;
