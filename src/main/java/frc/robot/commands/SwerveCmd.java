@@ -22,7 +22,7 @@ public class SwerveCmd extends Command {
         this.turnSpdFunc = turnSpdFunc;
         this.xLimiter = new SlewRateLimiter(SwerveConstants.kTeleSlew);
         this.yLimiter = new SlewRateLimiter(SwerveConstants.kTeleSlew);
-        this.turningLimiter = new SlewRateLimiter(SwerveConstants.kTeleAngularSlew);
+        this.turningLimiter = new SlewRateLimiter(SwerveConstants.kTeleSlew);
         addRequirements(swerveSubsystem);
     }
 
@@ -54,7 +54,6 @@ public class SwerveCmd extends Command {
         swerveSubsystem.setModuleStates(moduleStates);
     }
 
-    // When ur done ur done buddy
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.stopModules();

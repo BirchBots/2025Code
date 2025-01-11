@@ -8,25 +8,22 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
 
-  //Swerve subsystem: Controls physical components
-  private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
-  //XBoxController: just an xbox controller
-  XboxController m_driverController = new XboxController(IOConstants.kDriverControllerPort);
+    private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+    XboxController m_driverController = new XboxController(IOConstants.kDriverControllerPort);
 
-  public RobotContainer() {
-    // Into the swerve subsystem, pass the swerve command (new SwerveCmd) with three inputs: left stick y, left stick x, and right stick x
-    m_robotDrive.setDefaultCommand(new SwerveCmd(m_robotDrive,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> m_driverController.getRightX())
-    );
-    //Idk what this does just never delete it
-    configureBindings();
-  }
+    public RobotContainer() {
+        // Into the swerve subsystem, pass the swerve command (new SwerveCmd) with three inputs: left stick y, left stick x, and right stick x
+        m_robotDrive.setDefaultCommand(new SwerveCmd(m_robotDrive,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> m_driverController.getRightX())
+        );
+        configureBindings();
+    }
 
-  private void configureBindings() {}
+    private void configureBindings() {}
 
-  public Command getAutonomousCommand() {
-    return null;
-  }
+    public Command getAutonomousCommand() {
+        return null;
+    }
 }
