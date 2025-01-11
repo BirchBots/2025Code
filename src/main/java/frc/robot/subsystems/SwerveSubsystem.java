@@ -11,6 +11,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // Parameters: drive motor id, turn motor id, absolute encoder id, absolute encoder offset
         // These can all be physically found on the components or in rev software (will show u)
         // Repeat x4
+
     private final SwerveModule frontLeft = new SwerveModule(
             SwerveConstants.kFlDriveCAN,
             SwerveConstants.kFlTurnCAN,
@@ -46,17 +47,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        // Create an array of numbers with the rotation and speeds (what they should be, NOT WHAT THEY ARE)
-        double[] states = new double[] {
-                desiredStates[0].angle.getRadians(),
-                desiredStates[0].speedMetersPerSecond,
-                desiredStates[1].angle.getRadians(),
-                desiredStates[1].speedMetersPerSecond,
-                desiredStates[2].angle.getRadians(),
-                desiredStates[2].speedMetersPerSecond,
-                desiredStates[3].angle.getRadians(),
-                desiredStates[3].speedMetersPerSecond
-              };
         // Desaturate wheel speeds normalizes all the speeds, if theyre going faster than they physically can, divide by that number to get max speed of 1
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.kMaxMetersPerSecond);
         // Swerve module states each store an angle and speed, were given an array of 4 states for each corner, give each state to each corner
@@ -64,9 +54,30 @@ public class SwerveSubsystem extends SubsystemBase {
         frontLeft.setDesiredState(desiredStates[1]);
         backRight.setDesiredState(desiredStates[2]);
         backLeft.setDesiredState(desiredStates[3]);
+        // Create an array of numbers with the rotation and speeds (what they should be, NOT WHAT THEY ARE)
+        double[] desired_states = new double[] {
+                frontRight.getDesiredState().angle.getRadians(),
+                frontRight.getDesiredState().speedMetersPerSecond,
+                frontLeft.getDesiredState().angle.getRadians(),
+                frontLeft.getDesiredState().speedMetersPerSecond,
+                backRight.getDesiredState().angle.getRadians(),
+                backRight.getDesiredState().speedMetersPerSecond,
+                backLeft.getDesiredState().angle.getRadians(),
+                backLeft.getDesiredState().speedMetersPerSecond
+              };
         // SmartDashboard is just a place to put data, this can be obtained from simulation software, put speeds/ rotations
-        SmartDashboard.putNumberArray("states", states);
-
+        SmartDashboard.putNumberArray("states", desired_states);
+        double[] actual_states = new double[] {
+                frontRight.getState().angle.getRadians(),
+                frontRight.getState().speedMetersPerSecond,
+                frontLeft.getState().angle.getRadians(),
+                frontLeft.getState().speedMetersPerSecond,
+                backRight.getState().angle.getRadians(),
+                backRight.getState().speedMetersPerSecond,
+                backLeft.getState().angle.getRadians(),
+                backLeft.getState().speedMetersPerSecond
+        };
+        SmartDashboard.putNumberArray("actual", actual_states);
     }
 
     @Override

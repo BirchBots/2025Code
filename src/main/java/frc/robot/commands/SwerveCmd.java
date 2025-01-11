@@ -27,8 +27,13 @@ public class SwerveCmd extends Command {
     }
 
     @Override
-    public void initialize() {}
+    public void execute() {      
+        // Get current joystick values  
+        double xSpeed = xSpdFunc.get();
+        double ySpeed = ySpdFunc.get();
+        double turningSpeed = -turnSpdFunc.get();
 
+<<<<<<< Updated upstream
     @Override
     public void execute() {      
         // Get current joystick values  
@@ -46,6 +51,18 @@ public class SwerveCmd extends Command {
         ySpeed = yLimiter.calculate(ySpeed) * SwerveConstants.kMaxMetersPerSecond;
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveConstants.kMaxMetersPerSecond;
 
+=======
+        // Apply a deadband (if the joystick moves super little, just don't do anything, look up ternary operator if confused)
+        xSpeed = Math.abs(xSpeed) > IOConstants.kDeadband ? xSpeed : 0.0;
+        ySpeed = Math.abs(ySpeed) > IOConstants.kDeadband ? ySpeed : 0.0;
+        turningSpeed = Math.abs(turningSpeed) > IOConstants.kDeadband ? turningSpeed : 0.0;
+
+        // Add a slew limiter (makes motion less jank)
+        xSpeed = xLimiter.calculate(xSpeed) * SwerveConstants.kMaxMetersPerSecond;
+        ySpeed = yLimiter.calculate(ySpeed) * SwerveConstants.kMaxMetersPerSecond;
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveConstants.kMaxMetersPerSecond;
+
+>>>>>>> Stashed changes
         // ChassisSpeeds object, just give it x y and theta
         ChassisSpeeds chassisSpeeds;
         chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
