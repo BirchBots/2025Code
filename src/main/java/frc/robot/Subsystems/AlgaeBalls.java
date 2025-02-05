@@ -1,5 +1,6 @@
 package frc.robot.Subsystems;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,28 +10,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeBalls extends SubsystemBase{
 
- private final SparkMax throwLeftMotor;
- private final SparkMax throwRightMotor; 
+ private final SparkMax throwLeftMotor = new SparkMax(0, MotorType.kBrushless);
+ private final SparkMax throwRightMotor = new SparkMax(0, MotorType.kBrushless);
+ private final double speed = 0.5;
 
- public AlgaeBalls(int throwLeftMotorID, int throwRightMotorID) {
-    throwLeftMotor = new SparkMax(throwLeftMotorID, MotorType.kBrusless);
-    throwRightMotor = new SparkMax(throwRightMotorID, MotorType.kBrushless);
+ public void setThrowSpeed() { 
+   throwLeftMotor.set(speed);
+   throwRightMotor.set(-speed);
  }
 
- public void setThrowSpeed() { //some pre determined speed 
-   
+ public void setPickUpSpeed() {
+   throwLeftMotor.set(-speed);
+   throwRightMotor.set(speed);
  }
-
- public void setPickUpSpeed() {//some pre determind speed)
-    
- }
-
- public void stop() {
-    // set the throw motors to 0!
- }
-   
-
-
 
 
 }
