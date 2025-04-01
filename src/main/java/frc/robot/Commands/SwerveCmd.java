@@ -44,8 +44,7 @@ public class SwerveCmd extends Command {
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveConstants.kMaxMetersPerSecond;
 
         // ChassisSpeeds object, just give it x y and theta
-        ChassisSpeeds chassisSpeeds;
-        chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 
         // Create an array of 4 module states for each swerve module from kinematics (x and y location of modules) and chassis speeds
         SwerveModuleState[] moduleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);

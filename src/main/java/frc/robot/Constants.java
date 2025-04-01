@@ -47,4 +47,24 @@ public final class Constants {
         public static final int kDriverControllerPort = 0;
         public static final double kDeadband = 0.05;
     }
+
+    // AprilTag dimensions (in meters)
+    public static final double kAprilTagHeight = 0.165; // Standard AprilTag height for FRC
+    
+    // Camera mounting parameters
+    public static final double kCameraHeight = 0.5; // Height of camera from floor in meters
+    public static final double kCameraPitchRadians = Math.toRadians(20); // Camera angle (positive is up)
+    
+    // PID constants for target tracking
+    public static final double kP_Rotation = 0.03;
+    public static final double kI_Rotation = 0.0;
+    public static final double kD_Rotation = 0.001;
+    
+    public static final double kP_Forward = 0.3;
+    public static final double kI_Forward = 0.0;
+    public static final double kD_Forward = 0.0;
+    
+    // Tolerances
+    public static final double kAngleToleranceDegrees = 1.0;
+    public static final double kDistanceToleranceMeters = 0.1;
 }
