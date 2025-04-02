@@ -6,50 +6,20 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 public class LiftSub {
-
-
-    /*PLACE HOLDER NUMBER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!!!!!!!!!!!!!!*/
-    static int placeNumber;
     
-    
-    
-    //fix device ID
-    public final static SparkMax leftLiftMotor = new SparkMax(placeNumber, MotorType.kBrushless);
-    //fix device ID
-    public final static SparkMax rightLiftMotor = new SparkMax(placeNumber, MotorType.kBrushless);
+    private final SparkMax leftMotor = new SparkMax(9, MotorType.kBrushless);
+    private final SparkMax rightMotor = new SparkMax(10, MotorType.kBrushless);
 
-    RelativeEncoder leftLiftEncoder = leftLiftMotor.getEncoder();
-    RelativeEncoder rightLiftEncoder = rightLiftMotor.getEncoder();
-            
-    //variable initiation
-    int leftLiftMotorSpeed;
-    int rightLiftMotorSpeed = leftLiftMotorSpeed * -1;
-
-    int numbOfMotorRotations;
-
-    int liftHight = numbOfMotorRotations/placeNumber;
-
-
-    static void raiseLift() {
-        
-        while (liftHight < placeNumber){
-
-            leftLiftMotor.set(-0.69);
-            rightLiftMotor.set(0.69);
-
-        }
+    private final static double speed = 0.7;
+ 
+    public void raiseLift() {
+        leftMotor.set(-speed);
+        rightMotor.set(speed);
     }
 
-    static void lowerLift(){
-
-        while (liftHight < placeNumber){
-
-            leftLiftMotor.set(0.69);
-            rightLiftMotor.set(-0.69);
-
-        }
+    public void lowerLift(){
+        leftMotor.set(speed);
+        rightMotor.set(-speed);
     }
 }
 
