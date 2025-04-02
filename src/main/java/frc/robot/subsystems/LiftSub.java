@@ -1,11 +1,13 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.revrobotics.spark.SparkMax;
 
-public class LiftSub {
+public class LiftSub extends SubsystemBase {
     
     private final SparkMax leftMotor = new SparkMax(9, MotorType.kBrushless);
     private final SparkMax rightMotor = new SparkMax(10, MotorType.kBrushless);
