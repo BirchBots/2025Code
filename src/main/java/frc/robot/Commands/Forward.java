@@ -1,22 +1,21 @@
 package frc.robot.Commands;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.LimelightSubsystem;
+import frc.robot.Subsystems.TankSubsystem;
 
 public class Forward extends Command {
     
-    SwerveSubsystem drive = new SwerveSubsystem();
-    double startTime;
+    TankSubsystem drive = new TankSubsystem();
+    double properDistanceToTarget; //in meters
 
-    public Forward() {
+    public Forward(double properDistanceToTarget) {
+        this.properDistanceToTarget = properDistanceToTarget;
         addRequirements(drive); // drivetrain is an instance of our Drivetrain subsystem
      }
  
      public void initialize() {
-        startTime = Timer.getTimestamp();
     }
  
      /*
@@ -26,20 +25,20 @@ public class Forward extends Command {
            */
           public void execute() {
 
-            drive.setModuleStates(new SwerveModuleState[]{
-            new SwerveModuleState(1.0, new Rotation2d(0)),
-            new SwerveModuleState(1.0, new Rotation2d(0)),
-            new SwerveModuleState(1.0, new Rotation2d(0)),
-            new SwerveModuleState(1.0, new Rotation2d(0))
+            drive.setLeft(1);
+            drive.setRight(1);
             
-        });
           }
  
      /*
            * isFinished - Our isFinished method always returns false meaning this command never completes on it's own. The reason we do this is that this command will be set as the default command for the subsystem. This means that whenever the subsystem is not running another command, it will run this command. If any other command is scheduled it will interrupt this command, then return to this command when the other command completes.
            */
           public boolean isFinished() {
-              return (Timer.getTimestamp() - startTime >= 5.0);
+              //return (Timer.getTimestamp() - startTime >= endTime);
+
+              if (LimelightSubsystem.estimateDistance(0.1651, hightOfCamra, Math.PI/2) <= properDistanceToTarget){
+                return true;
+            }
           }
  
      protected void end() {

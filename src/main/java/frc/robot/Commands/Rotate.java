@@ -1,15 +1,12 @@
 package frc.robot.Commands;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.Subsystems.LimelightSubsystem;
-import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.TankSubsystem;
 
 public class Rotate extends Command {
 
-    SwerveSubsystem drive = new SwerveSubsystem();
+    TankSubsystem drive = new TankSubsystem();
     LimelightSubsystem limes = new LimelightSubsystem();
 
     public Rotate(){
@@ -25,17 +22,11 @@ public class Rotate extends Command {
     @Override
     public void execute() {
         if (limes.getAprilTagId() == 1 || limes.getAprilTagId() == 13) {
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, 1.0);
-
-            SwerveModuleState[] moduleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-
-            drive.setModuleStates(moduleStates);
+            drive.setLeft(-1);
+            drive.setRight(1);
         } else if (limes.getAprilTagId() == 2 || limes.getAprilTagId() == 12) {
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, -1.0);
-
-            SwerveModuleState[] moduleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-
-            drive.setModuleStates(moduleStates);
+            drive.setLeft(1);
+            drive.setRight(-1);
         }
 
     }

@@ -14,8 +14,8 @@ public class AprilTagAlignAndApproachCommand extends SequentialCommandGroup {
         
         
         // First, rotate to face the AprilTag
-        addCommands(new RotateToAprilTagCommand(swerveSubsystem, limelightSubsystem, targetAprilTagId));
-        addCommands(new Forward());
+        addCommands(new Rotate());
+        addCommands(new Forward(5.0));
 
     }
 }
