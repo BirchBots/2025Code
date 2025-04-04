@@ -9,15 +9,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
-import frc.robot.Commands.SwerveCmd;
 import frc.robot.Subsystems.AlgaeBalls;
 import frc.robot.Subsystems.ClimbSubSystem;
 import frc.robot.Subsystems.Coral;
-import frc.robot.Subsystems.SwerveSubsystem;
 
 public class RobotContainer {
 
-    private final SwerveSubsystem swerve = new SwerveSubsystem();
     private final AlgaeBalls algae = new AlgaeBalls();
     private final Coral coral = new Coral();
     private final ClimbSubSystem climb = new ClimbSubSystem();
@@ -37,12 +34,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // Into the swerve subsystem, pass the swerve command (new SwerveCmd) with three inputs: left stick y, left stick x, and right stick x
-        swerve.setDefaultCommand(new SwerveCmd(swerve,
-                    () -> -controller.getLeftY(),
-                    () -> -controller.getLeftX(),
-                    () -> controller.getRightX())
-        );
 
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
             .onTrue(new InstantCommand(() -> algae.setThrowSpeed(), algae));

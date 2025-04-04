@@ -5,15 +5,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LimelightSubsystem;
 import frc.robot.Subsystems.TankSubsystem;
 
-public class Forward extends Command {
+public class Forward extends Command{
     
     TankSubsystem drive = new TankSubsystem();
     double properDistanceToTarget; //in meters
+    double aprilTagHeight; //in meters
 
-    public Forward(double properDistanceToTarget) {
+    public Forward(double properDistanceToTarget, double aprilTagHeight){
         this.properDistanceToTarget = properDistanceToTarget;
+        this.aprilTagHeight = aprilTagHeight;
         addRequirements(drive); // drivetrain is an instance of our Drivetrain subsystem
-     }
+    }
  
      public void initialize() {
     }
@@ -36,7 +38,7 @@ public class Forward extends Command {
           public boolean isFinished() {
               //return (Timer.getTimestamp() - startTime >= endTime);
 
-              if (LimelightSubsystem.estimateDistance(0.1651, hightOfCamra, Math.PI/2) <= properDistanceToTarget){
+              if (LimelightSubsystem.estimateDistance(aprilTagHeight, hightOfCamra, Math.PI/2) <= properDistanceToTarget){
                 return true;
             }
           }

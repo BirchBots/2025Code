@@ -32,7 +32,7 @@ public class LiftSub {
         static int liftHight = numbOfMotorRotations/placeNumber;
     
     
-        static void raiseLift() {
+        public static void raiseLift() {
             
             while (liftHight < placeNumber){
 
@@ -42,7 +42,7 @@ public class LiftSub {
         }
     }
 
-    static void lowerLift(){
+    public static void lowerLift(){
 
         while (liftHight < placeNumber){
 
