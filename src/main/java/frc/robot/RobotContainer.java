@@ -12,7 +12,6 @@ public class RobotContainer {
     XboxController m_driverController = new XboxController(IOConstants.kDriverControllerPort);
 
     public RobotContainer() {
-        // Into the swerve subsystem, pass the swerve command (new SwerveCmd) with three inputs: left stick y, left stick x, and right stick x
         m_robotDrive.setDefaultCommand(new SwerveCmd(m_robotDrive,
                     () -> -m_driverController.getLeftY(),
                     () -> -m_driverController.getLeftX(),

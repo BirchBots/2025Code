@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveModule {
@@ -28,13 +29,8 @@ public class SwerveModule {
         absoluteEncoder = new CANcoder(absoluteEncoderId);
         this.encoderOffset = encoderOffset;
 
-        // Reduce PID values significantly
-        pidController = new PIDController(
-            SwerveConstants.kP * 0.4,  // Reduce P gain
-            0,  // Remove I gain for now
-            SwerveConstants.kD * 0.2   // Reduce D gain
-        );
-        pidController.enableContinuousInput(0, 2 * Math.PI);  // Back to 0 to 2π range
+        pidController = new PIDController(SwerveConstants.kP * 0.4, 0, SwerveConstants.kD * 0.2);
+        pidController.enableContinuousInput(-Math.PI, Math.PI); 
     }
 
     public void setDesiredState(SwerveModuleState state) {
@@ -43,16 +39,12 @@ public class SwerveModule {
             return;
         }
         
-        // Get the current angle
         double currentAngleRad = getAbsoluteEncoderRad();
         
-        // Optimize the state to avoid spinning 180 degrees
         state.optimize(new Rotation2d(currentAngleRad));
-        // Set drive speed (keep your original 0.2 factor for now)
         //driveMotor.set(-state.speedMetersPerSecond * 0.2 / SwerveConstants.kMaxMetersPerSecond);
         
-        // Set turn motor (keep your original PID calculation)
-        double turningOutput = pidController.
+        double turningOutput = pidController.calculate(currentAngleRad, state.angle.getRadians());
         turnMotor.set(turningOutput);
     }
 
@@ -61,7 +53,7 @@ public class SwerveModule {
             System.out.println("CANcoder not initialized properly.");
             return 0;
         }
-        return absoluteEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI - encoderOffset;
+        return Units.rotationsToRadians(absoluteEncoder.getAbsolutePosition().getValueAsDouble() - Units.radiansToRotations(encoderOffset));
     }
 
     public SwerveModuleState getState() {

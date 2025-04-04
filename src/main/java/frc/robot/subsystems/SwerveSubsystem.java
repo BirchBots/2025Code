@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
-    // 4 Swerve modules used for each corner, ID's can be set with software, offset must be found with physical measurements
-
     private final SwerveModule frontLeft = new SwerveModule(
         SwerveConstants.kFlDriveCAN,
         SwerveConstants.kFlTurnCAN,
@@ -43,16 +41,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        // Desaturate wheel speeds normalizes all the speeds, if theyre going faster than they physically can, divide by that number to get max speed of 1
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.kMaxMetersPerSecond);
-        // Swerve module states each store an angle and speed, we're given an array of 4 states for each corner, give each state to each corner
         frontRight.setDesiredState(desiredStates[0]);
         frontLeft.setDesiredState(desiredStates[1]);
         backRight.setDesiredState(desiredStates[2]);
         backLeft.setDesiredState(desiredStates[3]);
 
 
-        // For testing: values can be put on SmartDashboard, used for visualization
         double[] desired_states = new double[] {
             desiredStates[0].angle.getRadians(),
             desiredStates[0].speedMetersPerSecond,
