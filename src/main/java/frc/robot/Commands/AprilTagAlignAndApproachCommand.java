@@ -12,9 +12,9 @@ public class AprilTagAlignAndApproachCommand extends SequentialCommandGroup {
         
         
         // First, rotate to face the AprilTag
-        addCommands(new Forward(5.0, 1.40335));
+        addCommands(new Forward(1.8288, 1.40335));
         addCommands(new Rotate());
-        addCommands(new Forward(5.0, 0.22225));
+        addCommands(new Forward(0.305, 0.22225));
         addCommands(new PlacingAuto());
 
     }
