@@ -48,7 +48,7 @@ public class SwerveCmd extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        //swerveSubsystem.stopModules();
     }
 
     @Override

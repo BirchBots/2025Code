@@ -31,23 +31,23 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveConstants.kBrEncoderId,
         SwerveConstants.kBrOffset);
 
-
+/* 
     public void stopModules() {
         frontLeft.stop();
         frontRight.stop();
         backLeft.stop();
         backRight.stop();
     }
-
+*/
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.kMaxMetersPerSecond);
-        frontRight.setDesiredState(desiredStates[0]);
-        frontLeft.setDesiredState(desiredStates[1]);
-        backRight.setDesiredState(desiredStates[2]);
-        backLeft.setDesiredState(desiredStates[3]);
+        frontRight.setTargetState(desiredStates[0]);
+        frontLeft.setTargetState(desiredStates[1]);
+        backRight.setTargetState(desiredStates[2]);
+        backLeft.setTargetState(desiredStates[3]);
 
-
+/* 
         double[] desired_states = new double[] {
             desiredStates[0].angle.getRadians(),
             desiredStates[0].speedMetersPerSecond,
@@ -70,5 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
             backLeft.getState().speedMetersPerSecond
         };
         SmartDashboard.putNumberArray("actual", actual_states);
+
+        */
     }
 }
