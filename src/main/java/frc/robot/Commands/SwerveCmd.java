@@ -1,6 +1,7 @@
 package frc.robot.Commands;
 
 import java.util.function.Supplier;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -28,31 +29,37 @@ public class SwerveCmd extends Command {
 
     @Override
     public void execute() {      
-        double xSpeed = xSpdFunc.get();
-        double ySpeed = ySpdFunc.get();
-        double turningSpeed = -turnSpdFunc.get();
+        double xInput = xSpdFunc.get();
+        double yInput = ySpdFunc.get();
+        double turnInput = -turnSpdFunc.get();
+        // Deadband
+        if (Math.abs(xInput) < IOConstants.kDeadband) xInput = 0;
+        if (Math.abs(yInput) < IOConstants.kDeadband) yInput = 0;
+        if (Math.abs(turnInput) < IOConstants.kDeadband) turnInput = 0;
 
-        xSpeed = Math.abs(xSpeed) > IOConstants.kDeadband ? xSpeed : 0.0;
-        ySpeed = Math.abs(ySpeed) > IOConstants.kDeadband ? ySpeed : 0.0;
-        turningSpeed = Math.abs(turningSpeed) > IOConstants.kDeadband ? turningSpeed : 0.0;
+        // Slew rate limiters
+        xInput = xLimiter.calculate(xInput);
+        yInput = yLimiter.calculate(yInput);
+        turnInput = turningLimiter.calculate(turnInput);
 
-        xSpeed = xLimiter.calculate(xSpeed) * SwerveConstants.kMaxMetersPerSecond;
-        ySpeed = yLimiter.calculate(ySpeed) * SwerveConstants.kMaxMetersPerSecond;
-        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveConstants.kMaxMetersPerSecond;
+        // ----- FULL VECTOR MATH -----
+        // Convert joystick into a proper vector
+        double magnitude = Math.hypot(xInput, yInput);
+        double angle = Math.atan2(yInput, xInput);   // radians
 
+        // Convert back into chassis-relative velocity components
+        double xSpeed = magnitude * Math.cos(angle) * SwerveConstants.kMaxMetersPerSecond;
+        double ySpeed = magnitude * Math.sin(angle) * SwerveConstants.kMaxMetersPerSecond;
+        double turningSpeed = turnInput * SwerveConstants.kMaxAngularSpeed;
+
+         // Build chassis speeds (robot-relative)
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 
-        SwerveModuleState[] moduleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+        // Convert to module states
+        SwerveModuleState[] moduleStates =
+        SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        // Send to subsystem
         swerveSubsystem.setModuleStates(moduleStates);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        //swerveSubsystem.stopModules();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

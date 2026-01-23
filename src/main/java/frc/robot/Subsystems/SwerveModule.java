@@ -19,15 +19,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveModule extends SubsystemBase{
 
+    //drive 
+    public Rotation2d getAngle() {
+        return Rotation2d.fromRotations(getModuleAngRotations());
+    }
+
     SparkMax driveMotor;
     int driveMotorID;
     SparkAbsoluteEncoder driveMotorEncoder;
     SparkClosedLoopController  driveController;
+    //steer
     SparkMax steerMotor;
     SparkAbsoluteEncoder steerMotorEncoder;
     PIDController steerController;
+    //module encoder 
     CANcoder moduleEncoder;
     double encoderOffsetRotations;
+    //conversion factors
     final double WHEEL_DIAMETER = Units.inchesToMeters(4);
     final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     final double GEAR_RATIO = 1.0 / 6.75;
@@ -36,36 +44,61 @@ public class SwerveModule extends SubsystemBase{
     final double STEER_POSITION_CONVERSION = 1;
     final double STEER_VELOCITY_CONVERSION = STEER_POSITION_CONVERSION / 60.0;
 
+    //CONSTRUCTOR//
         public SwerveModule(int driveMotorID, int steerMotorID, int encoderID, Double encoderOffsetRotations){
             this.driveMotorID = driveMotorID;
 
+            //drive motor 
             driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
             SparkMaxConfig driveConfig = new SparkMaxConfig();
             driveConfig.smartCurrentLimit(40);
             driveConfig.idleMode(IdleMode.kBrake);
             driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+            //drive encoder
             driveMotorEncoder = driveMotor.getAbsoluteEncoder();
+            //steer motor
             steerMotor = new SparkMax(steerMotorID, MotorType.kBrushless);
             SparkMaxConfig steerConfig = new SparkMaxConfig();
             steerConfig.idleMode(IdleMode.kBrake);
             steerConfig.smartCurrentLimit(40);
             steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            // module encoder
             moduleEncoder = new CANcoder(encoderID);
             this.encoderOffsetRotations = encoderOffsetRotations;
+
+            //controllers
+            //driveController = driveMotor.getPIDController();
+            //driveController.setP(Constants.Modules.SpeedKP);
+            //driveController.setI(Constants.Modules.SpeedKI);
+            //driveController.setD(Constants.Modules.SpeedKD);
 
             steerController = new PIDController(1.5, 0.0, 0.0);
             steerController.enableContinuousInput(0, 1);
 
         }
 
-        public void setTargetState(SwerveModuleState targetState) {
-            double currentAngle = getModuleAngRotations();
-            targetState.optimize(new Rotation2d(currentAngle));
-            steerMotor.set(-steerController.calculate(currentAngle, targetState.angle.getRotations()));
-            targetState.speedMetersPerSecond *= targetState.angle.minus(new Rotation2d(currentAngle*2*Math.PI)).getCos();
-            driveMotor.set(targetState.speedMetersPerSecond/4.52); 
+        public void setTargetState(SwerveModuleState desiredState) {
+    
+            // Optimize wheel angle vs current module angle
+            Rotation2d currentAngle = getAngle();
+            SwerveModuleState optimized = SwerveModuleState.optimize(desiredState, currentAngle);
+        
+            // -------- STEERING MOTOR -------- //
+            // Convert the optimized angle (Rotation2d) to rotations (0–1)
+            double targetRotations = optimized.angle.getRotations();
+            double currentRotations = getModuleAngRotations();
+        
+            double steerOutput = steerController.calculate(currentRotations, targetRotations);
+            steerMotor.set(-steerOutput);   // your code uses inverted steering
+        
+            // -------- DRIVE MOTOR -------- //
+            double speed = optimized.speedMetersPerSecond;
+        
+            // Normalize to motor command (your 4.52 value)
+            driveMotor.set(speed / 4.52);
         }
+
 
         public double getModuleAngRotations(){
             return moduleEncoder.getAbsolutePosition().getValueAsDouble() - encoderOffsetRotations;
@@ -73,14 +106,15 @@ public class SwerveModule extends SubsystemBase{
         
         public SwerveModulePosition getModulePosition() {
             return new SwerveModulePosition(
-                driveMotorEncoder.getPosition(),
+                driveMotorEncoder.getPosition(), //FIXME i broke this sorry
                 Rotation2d.fromRotations(getModuleAngRotations())
             );  
         }
 
         public SwerveModuleState getSwerveModuleState() {
             return new SwerveModuleState(
-                driveMotorEncoder.getVelocity(),
+                driveMotorEncoder.getVelocity(), //FIXME i broke this sorry
                 Rotation2d.fromRotations(getModuleAngRotations()));
         }
+    ////
 }
